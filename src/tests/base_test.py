@@ -85,13 +85,11 @@ class BaseTest:
         Override this fixture in your test class to provide a custom configuration object
         :rtype: new node controller configuration
         """
-        if global_variables.tf_platform == consts.Platforms.VSPHERE:
-            config = VSphereConfig()
-        elif global_variables.tf_platform == consts.Platforms.NUTANIX:
-            config = NutanixConfig()
-        else:
-            config = TerraformConfig()
-
+        
+        container_conf = {consts.Platforms.VSPHERE: VSphereConfig,
+                          consts.Platforms.NUTANIX: NutanixConfig}
+        config = container_conf.get(global_variables.tf_platform,
+                                    TerraformConfig)()
         self.update_parameterized(request, config)
         yield config
 
